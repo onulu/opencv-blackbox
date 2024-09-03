@@ -49,7 +49,6 @@ def capture_video(cap, duration=DURATION, fps=30, display=True):
 
         frames.append(frame)
 
-        # 현재 시간에서 시작 시간을 뺀 시간이 지정한 duration보다 커지면 loop를 빠져나간다.
         elapsed_time = time.time() - start_time
         if elapsed_time >= duration:
             break
