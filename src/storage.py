@@ -3,6 +3,8 @@ import os
 import cv2
 import shutil
 
+from logger import logger
+
 
 def generate_filename():
     now = datetime.now()
@@ -24,7 +26,7 @@ def save_video(frames, filename, fps=30):
     global total_storage_size
 
     if not frames:
-        print("No frames to save")
+        logger.warn("No frames to save")
         return False
 
     filename = f"{filename}.avi"
@@ -36,7 +38,7 @@ def save_video(frames, filename, fps=30):
         for frame in frames:
             out.write(frame)
     except Exception as e:
-        print(f"Error while writing video: {str(e)}")
+        logger.error(f"Error while writing video: {str(e)}")
         return False
     finally:
         out.release()
@@ -44,7 +46,7 @@ def save_video(frames, filename, fps=30):
     file_size = os.path.getsize(filename)
     total_storage_size += file_size
 
-    print(f"Video saved successfully: {filename}")
+    logger.info(f"Video saved successfully: {filename}")
     return True
 
 
@@ -81,15 +83,15 @@ def manage_storage(base_path, max_size_gb=3):
 
         oldest_folder = os.path.join(base_path, folders[0])
         folder_size = get_directory_size(oldest_folder)
-        print(f"Deleting oldest folder: {oldest_folder}")
+        logger.info(f"Deleting oldest folder: {oldest_folder}")
 
         try:
             shutil.rmtree(oldest_folder)
             total_storage_size -= folder_size
         except Exception as e:
-            print(f"Error deleting folder {oldest_folder}: {str(e)}")
+            logger.error(f"Error deleting folder {oldest_folder}: {str(e)}")
             break
 
-    print(
+    logger.info(
         f"Storage management complete. Current size: {get_directory_size(base_path) / (1024*1024*1024):.2f} GB"
     )
