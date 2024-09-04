@@ -3,14 +3,14 @@ import shutil
 from datetime import datetime
 
 
-def createFolder(baseFolder):
+def create_folder(baseFolder):
     foldername = datetime.now().strftime("%Y%m%d_%H")
     folderPath = os.path.join(baseFolder, foldername)
     os.makedirs(folderPath, exist_ok=True)
     return folderPath
 
 
-def getDirectorySize(baseFolder):
+def get_directory_size(baseFolder):
     totalSize = sum(
         os.path.getsize(os.path.join(dirpath, file))
         for dirpath, _, files in os.walk(baseFolder)
@@ -19,8 +19,8 @@ def getDirectorySize(baseFolder):
     return totalSize
 
 
-def manageStorage(basePath, maxSizeGB):
-    totalSize = getDirectorySize(basePath)
+def manage_storage(basePath, maxSizeGB):
+    totalSize = get_directory_size(basePath)
     maxSizeIntoBytes = maxSizeGB * 1024 * 1024 * 1024
 
     while totalSize > maxSizeIntoBytes:
@@ -39,5 +39,5 @@ def manageStorage(basePath, maxSizeGB):
         shutil.rmtree(oldestFolder)
 
     print(
-        f"Storage management complete.  {getDirectorySize(basePath) / (1024*1024*1024):.2f} GB"
+        f"Storage management complete.  {get_directory_size(basePath) / (1024*1024*1024):.2f} GB"
     )

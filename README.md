@@ -12,6 +12,6 @@
 ## Folder Structure
 
 - `src/main.py`: 앱의 시작지점
-- `src/camera.py`: 카메라와 관련된 로직, openCV를 사용해 비디오 저장 로직
-- `src/storage.py`: 파일과 폴더 생성, 저장, 용량 관리 로직
-- `src/utils.py`: 그외에 필요한 유틸 함수
+- `src/blackbox.py`: 카메라와 관련된 로직, 파일 저장과 관련된 로직
+- `src/utils.py`: 폴더 생성, 폴더 용량 관련 유틸 함수
+- `src/logger.py`: 추후 로거 적용 예정.

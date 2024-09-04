@@ -6,25 +6,30 @@ from blackbox import Camera, Recorder
 
 
 def main():
-    exitEvent = Event()
-    frameQueue = Queue()
-    camera = Camera(frameQueue, exitEvent=exitEvent)
-    recorder = Recorder(frameQueue, exitEvent=exitEvent)
+    exit_event = Event()
+    frame_queue = Queue()
+    camera = Camera(frame_queue, exit_event=exit_event)
+    recorder = Recorder(frame_queue, exit_event=exit_event)
 
     try:
         camera.start()
         recorder.start()
 
-        while not exitEvent.is_set():
-            time.sleep(1)
+        while not exit_event.is_set():
+            time.sleep(0.1)
 
     except KeyboardInterrupt:
         print("Keyboard interrupt received. Stopping recording...")
 
     finally:
+        exit_event.set()
         camera.stop()
         recorder.stop()
         print("All threads stopped. Exiting.")
+
+        # cleanup
+        frame_queue.queue.clear()
+        print("Exiting program.")
 
 
 if __name__ == "__main__":
