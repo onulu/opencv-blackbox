@@ -31,12 +31,15 @@ class Camera:
         """카메라 캡쳐를 위한 별도의 쓰레드를 시작한다."""
         self.thread = Thread(target=self._capture_video)
         self.thread.start()
+
         print("Starting the camera thread.")
 
     def stop(self):
         """카메라 쓰레드를 종료한다."""
         print("Stopping camera thread...")
+
         self.exit_event.set()
+
         if self.thread and self.thread.is_alive():
             self.thread.join(timeout=1.0)
 
@@ -49,11 +52,6 @@ class Camera:
         """
         cap = cv2.VideoCapture(0)
 
-        if not cap.isOpened():
-            print("Failed to open the camera.")
-            self.exit_event.set()
-            return
-
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, FRAME_WIDTH)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT)
         cap.set(cv2.CAP_PROP_FPS, FPS)
@@ -61,21 +59,23 @@ class Camera:
         next_frame_time = time.time()
 
         try:
-            while not self.exit_event.is_set():
+            while cap.isOpened() and not self.exit_event.is_set():
                 current_time = time.time()
 
-                # 현재 카메라 시간이 프레임이 찍여야 할 예정 시간보다 작아지면 너무 많은 프레임이 찍힐 수 있으므로 이를 방지하는 코드
-                if current_time >= next_frame_time:
-                    ret, frame = cap.read()
-                    if ret:
-                        self._handle_frame(frame)
-                    # next_frame_time을 갱신
-                    next_frame_time += 1 / self.fps
+                ret, frame = cap.read()
+
+                if ret:
+                    self._handle_frame(frame)
+
+                    if current_time < next_frame_time:
+                        time.sleep(1 / self.fps)
                 else:
-                    # 카메라 캡쳐가 순식간에 이뤄진다고 가정하고 프레임레이트 만큼 일시 정지한다.
-                    time.sleep(1 / self.fps)
+                    print("Failed to capture the frame.")
+                    break
+
         finally:
             cap.release()
+            cv2.destroyAllWindows()
 
     def _handle_frame(self, frame):
         """
