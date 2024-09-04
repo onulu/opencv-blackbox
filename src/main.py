@@ -1,15 +1,30 @@
 #!/usr/bin/env python3
-
-from logger import logger
-from blackbox import BlackBox
+import time
+from queue import Queue
+from threading import Event
+from blackbox import Camera, Recorder
 
 
 def main():
+    exitEvent = Event()
+    frameQueue = Queue()
+    camera = Camera(frameQueue, exitEvent=exitEvent)
+    recorder = Recorder(frameQueue, exitEvent=exitEvent)
+
     try:
-        blackbox = BlackBox()
-        blackbox.run()
-    except Exception as e:
-        logger.exception(f"Critical error in main: {str(e)}")
+        camera.start()
+        recorder.start()
+
+        while not exitEvent.is_set():
+            time.sleep(1)
+
+    except KeyboardInterrupt:
+        print("Keyboard interrupt received. Stopping recording...")
+
+    finally:
+        camera.stop()
+        recorder.stop()
+        print("All threads stopped. Exiting.")
 
 
 if __name__ == "__main__":

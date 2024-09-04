@@ -1,4 +1,0 @@
-BASE_PATH = "recordings"
-MAX_STORAGE_GB = 0.1
-FPS = 30
-DURATION = 5

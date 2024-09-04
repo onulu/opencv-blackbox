@@ -3,7 +3,7 @@ import logging
 
 def setup_logger():
     logging.basicConfig(
-        level=logging.DEBUG,
+        level=logging.INFO,
         format="%(asctime)s - %(module)s - %(levelname)s - %(message)s",
         filename="blackbox.log",
     )
